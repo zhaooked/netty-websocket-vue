@@ -1,29 +1,43 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Index from '@/components/Index'
-// import EasyScroll from 'easyscroll'
-import VueContextMenu from 'vue-contextmenu'
+import Login from '@/components/Login'
 import 'vue-contextmenu/style/css/font-awesome.min.css'
-import VueResource from 'vue-resource'
-Vue.use(VueContextMenu)
-// Vue.use(EasyScroll)
-
-
-Vue.use(VueResource)
 
 Vue.use(Router)
 
 export default new Router({
   routes: [
     {
-      path: '/',
+      path: '/chat',
       name: 'index',
-      component: Index
+      component: Index,
+      beforeEnter (to, from, next) {
+        let token = window.sessionStorage.getItem('sessionId')
+        if (token === null || !token || !/\S/.test(token)) {
+          next({ name: 'login' })
+        } else {
+          next()
+        }
+      }
     },
     {
       path: '/index',
-      name: 'index',
-      component: Index
+      name: 'chat',
+      component: Index,
+      beforeEnter (to, from, next) {
+        let token = window.sessionStorage.getItem('sessionId')
+        if (token === null || !token || !/\S/.test(token)) {
+          next({ name: 'login' })
+        } else {
+          next()
+        }
+      }
     },
+    {
+      path: '/',
+      name: 'login',
+      component: Login
+    }
   ]
 })

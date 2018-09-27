@@ -2,7 +2,7 @@
   <div :class="['ContactsView clearfix',{'defaultState':isDefault == false}]">
     <navBar></navBar>
     <div class="ContactsViewCont">
-      <div class="infoDetail" v-if="isDefault" :userAid="currentData[0].aid">
+      <div class="infoDetail"  :userAid="currentData[0].aid">
          <div class="userImg">
              <img :src="currentData[0].avatar"/>
          </div>
@@ -27,7 +27,7 @@
 </template>
 <script>
 import navBar from './navBar.vue'
-import { hybrid } from './../until/inside'  
+import { hybrid } from './../until/inside'
 export default {
   name: 'ContactsView',
   components:{
@@ -35,10 +35,10 @@ export default {
   },
   props: ['currentData','type','isDefault'],
   watch:{
-    currentData:{  
-      handler:function(val,oldval){  
+    currentData:{
+      handler:function(val,oldval){
         this.LatelyGame = val[0].played_game_info
-      },  
+      },
       deep:true
     },
   },
@@ -107,7 +107,7 @@ export default {
     }
   },
   mounted(){
-    
+
   },
   created: function () {
     this.$hybrid.refuse = this.refuse

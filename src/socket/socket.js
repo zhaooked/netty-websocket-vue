@@ -2,8 +2,8 @@
 
 exports.install = function (Vue, options) {
     Vue.prototype.socket = function (){
-        var ws = new WebSocket("wss://stone.snail.com:4433/");
-        ws.onmessage = function (evt) { 
+        var ws = new WebSocket("ws://127.0.0.1:9090/");
+        ws.onmessage = function (evt) {
           var received_msg = evt.data;
           console.log(evt,'evt');
           console.log(this.$store)

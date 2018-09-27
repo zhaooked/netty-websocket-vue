@@ -4,26 +4,23 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import $ from 'jquery'
-import axios from 'axios'
 import store from './store'
 import vuex from 'vuex'
-import { hybrid } from './until/inside'  
-Vue.prototype.$hybrid = hybrid 
-
-Vue.use(vuex);
-import {post,fetch,patch,put} from './until/axios'
-
+import { hybrid } from './until/inside'
+import {post, fetch, patch, put, postFile} from './until/axios'
 //定义全局变量
+Vue.prototype.$hybrid = hybrid
 Vue.prototype.$post = post
 Vue.prototype.$fetch = fetch
 Vue.prototype.$patch = patch
 Vue.prototype.$put = put
+Vue.prototype.$postFile = postFile
 
+Vue.use(vuex);
 Vue.config.productionTip = false
 
 // import socket from './socket/socket'
 // Vue.use(socket);
-
 new Vue({
   el: '#app',
   router,

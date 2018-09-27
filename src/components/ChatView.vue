@@ -4,7 +4,7 @@
     <div class="ChatViewCont" v-show="chatData.nickname != 'default'"  :otheraid="chatData.aid">
        <div class="ChatViewContMenu">
          <span class="">{{chatData.nickname}}</span>
-         <em v-if="chatData.playing_status != 0">正在玩：{{chatData.playing_status != 0 && chatData.nickname != 'default' ? chatData.playing_game_info.name : ''}}</em>
+         <em v-if="chatData.playing_status != 0">正在玩：{{''}}</em>
        </div>
        <div class="ChatViewContWarp">
           <div class="v_a">
@@ -15,7 +15,10 @@
                        <div class="chatUserImg">
                           <img :src="list.avatar"/>
                        </div>
-                       <div class="chatText">{{list.text}}</div>
+                       <div class="chatText" v-if="list.meType == 1">{{list.text}}</div>
+                       <div class="chatText" v-if="list.meType == 2">
+                          <img :src="list.url" style="width: 300px"/>
+                       </div>
                        <div class="chatState"></div>
                     </div>
                 </li>
@@ -25,8 +28,8 @@
        <div class="ChatViewContEditer">
           <div class="edMenu">
              <div class="edMenuIcon face" v-if="false"></div>
-             <div class="edMenuIcon image"  v-if="false">
-               <input type="file"/>
+             <div class="edMenuIcon image">
+               <input type="file" accept="image/png,image/gif,image/jpeg" @change="triggerFile($event)"/>
              </div>
           </div>
           <div class="edCont">
@@ -46,24 +49,27 @@ export default {
   },
   props:['chatData','isDefault','sendMsg'],
   watch:{
-    chatData:{  
+    chatData:{
       handler:function(val,oldval){
+        let vm = this
         if(val.messages){
           this.messageList = val.messages
         }
-        $(document).ready(function(){ 
+        $(document).ready(function(){
           $(".edContWarp").html('');
           $(".v_a").scrollTop($(".v_a")[0].scrollHeight + 160);
+//          let container = vm.$el.querySelector("#chatViewContainer")
+//          container.scrollTop = vm.$el.querySelector("#container").scrollHeight
         })
-      },  
+      },
       deep:true
     },
-    Chatrecord:{  
-      handler:function(val,oldval){  
-        $(document).ready(function(){ 
+    Chatrecord:{
+      handler:function(val,oldval){
+        $(document).ready(function(){
           $(".v_a").scrollTop($(".v_a")[0].scrollHeight + 160);
         })
-      },  
+      },
       deep:true
     },
     "$store.state.peinfo.list":function(){
@@ -72,7 +78,7 @@ export default {
       }
     },
     "$store.state.record.list":function(){
-     
+
     }
   },
   data () {
@@ -80,10 +86,10 @@ export default {
       tshow:this.sendMsg,
       messageList:[],
       data:{
-        sendmessageUrl:'http://stoneapi.snail.com/v2/user/friend/send-text-message',
+        sendmessageUrl: '../chat/sendFriend',
         peoinfo:[],
       },
-      getTimeUrl:'https://stoneapi.snail.com/v2/env/time',
+      getTimeUrl:'../chat/time',
       nowtime:0
     }
   },
@@ -98,7 +104,7 @@ export default {
             if (typeof obj == 'string') obj = document.getElementById(obj)
             obj.focus();
             if(window.getSelection){
-              var sel = window.getSelection();            
+              var sel = window.getSelection();
               var tempRange = document.createRange();
               tempRange.setStart(obj[0].firstChild, obj[0].firstChild.length);
               sel.removeAllRanges();
@@ -109,26 +115,24 @@ export default {
     },
     getNowtime:function(){
       this.$fetch(this.getTimeUrl).then((response) => {
-        if(response.code === 200){
-          this.nowtime = this.time(response.timestamp,'hm')
-        }
+          this.nowtime = this.time(parseInt(response),'hm')
       })
     },
-    time:function(unixtimestamp,type){  
-      var unixtimestamp = new Date(unixtimestamp*1000);  
-      var year = 1900 + unixtimestamp.getYear();  
-      var month = "0" + (unixtimestamp.getMonth() + 1);  
-      var date = "0" + unixtimestamp.getDate();  
-      var hour = "0" + unixtimestamp.getHours();  
-      var minute = "0" + unixtimestamp.getMinutes();  
-      var second = "0" + unixtimestamp.getSeconds();  
+    time:function(unixtimestamp,type){
+      var unixtimestamp = new Date(unixtimestamp);
+      var year = 1900 + unixtimestamp.getYear();
+      var month = "0" + (unixtimestamp.getMonth() + 1);
+      var date = "0" + unixtimestamp.getDate();
+      var hour = "0" + unixtimestamp.getHours();
+      var minute = "0" + unixtimestamp.getMinutes();
+      var second = "0" + unixtimestamp.getSeconds();
       if(type === 'all'){
-        return year + "-" + month.substring(month.length-2, month.length)  + "-" + date.substring(date.length-2, date.length)  
-            + " " + hour.substring(hour.length-2, hour.length) + ":"  
-            + minute.substring(minute.length-2, minute.length) + ":"  
-            + second.substring(second.length-2, second.length);  
+        return year + "-" + month.substring(month.length-2, month.length)  + "-" + date.substring(date.length-2, date.length)
+            + " " + hour.substring(hour.length-2, hour.length) + ":"
+            + minute.substring(minute.length-2, minute.length) + ":"
+            + second.substring(second.length-2, second.length);
       }else if(type == 'hm'){
-        return hour.substring(hour.length-2, hour.length) + ":"  + minute.substring(minute.length-2, minute.length)  
+        return hour.substring(hour.length-2, hour.length) + ":"  + minute.substring(minute.length-2, minute.length)
       }else{
         return minute.substring(minute.length-2, minute.length)
       }
@@ -141,7 +145,6 @@ export default {
       list.messages.push(data)
       this.$store.commit('chatrecordstate',{data:list,type:'on'})
       this.chatData.last_message = text
-      // this.getNowtime() //获取实时时间
       this.chatData.last_send_at = this.nowtime
       var data = {
         type:'chatview',
@@ -152,13 +155,34 @@ export default {
     sendText:function(text){
       this.sendMessage(this.chatData.aid,text);
     },
-    enter:function(obj){ 
+    triggerFile: function (event) {
+      let file = event.target.files[0]
+      let fromId = sessionStorage.getItem('sessionId')
+      let param = new FormData()
+      param.append('file', file)
+      param.append('fromSessionId', fromId)
+      param.append('toSessionId', this.chatData.aid)
+      console.log(param.get('file'))
+      let on = {
+        is_type: "isSelf",
+        time: "",
+        meType: 2,
+        avatar:this.$store.state.peinfo.list.avatar
+      }
+      this.$postFile('../chat/sendImg',param).then(res => {
+        on.url = res.url
+        this.messageList.push(on)
+        this.nowtime = this.time(parseInt(res.timestamp),'hm')
+        this.saveRecord(on, '图片')
+      })
+    },
+    enter:function(obj){
       var e = e || window.event, ec = e.keyCode || e.which;
       if (!e.ctrlKey && 13 == ec) {
         if($('.edContWarp').text() != '') {
           this.sendText($('.edContWarp').text())
         }
-        $(document).ready(function(){ 
+        $(document).ready(function(){
           $(".v_a").scrollTop($(".v_a")[0].scrollHeight+160);
         })
         $('.edContWarp').html('')
@@ -166,7 +190,7 @@ export default {
         return false;
       }else if (e.ctrlKey && 13 == ec) {
         $("#sendTextarea").append("<div><br/></div>");
-        var o = document.getElementById("sendTextarea").lastChild;        
+        var o = document.getElementById("sendTextarea").lastChild;
         var textbox = document.getElementById('sendTextarea');
         var sel = window.getSelection();
         var range = document.createRange();
@@ -176,38 +200,32 @@ export default {
         range.setStartAfter(o);
         sel.removeAllRanges();
         sel.addRange(range);
-      }   
+      }
     },
     removeSendTs:function(){
       this.tshow = false
       console.log(this.chatData,'sdg')
     },
     sendMessage:function(aid,content){
-      var on = { 
-        is_type:"isSelf",
-        time:"",
-        text:content,
+      var on = {
+        is_type: "isSelf",
+        time: "",
+        text: content,
+        meType: 1,
         avatar:this.$store.state.peinfo.list.avatar
       }
-      this.$post(this.data.sendmessageUrl,{to_aid:aid,content:content}).then((response) => {
-        if(response.code === 200){
+      let fromId = sessionStorage.getItem('sessionId')
+      this.$fetch(this.data.sendmessageUrl, {fromSessionId: fromId, toSessionId: aid, message: content}).then((response) => {
           this.messageList.push(on)
           this.nowtime = this.time(parseInt(response.timestamp),'hm')
           this.saveRecord(on,content)
-        }else if(response.code === 500){
-          var data = {"message":response.message}
-          this.$store.commit('rulestate',{type:'other',status:true,data:data})
-          $('.edContWarp').blur()
-        }
       })
     }
   },
   mounted(){
     this.count($("#sendTextarea"))
     this.$fetch(this.getTimeUrl).then((response) => {
-      if(response.code === 200){
-        this.nowtime = this.time(parseInt(response.timestamp),'hm')
-      }
+        this.nowtime = this.time(parseInt(response),'hm')
     })
   },
   created: function () {

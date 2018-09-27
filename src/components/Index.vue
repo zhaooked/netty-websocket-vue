@@ -48,36 +48,33 @@ export default {
       AddContacts:this.$store.state.menu.other,
       data:{
         info:[],
-        peInfoUrl:'http://stoneapi.snail.com/v2/user/info'
+        peInfoUrl: '../chat/info'
       }
-      
     }
   },
   methods: {
   },
   mounted(){
-    // this.$fetch(this.data.peInfoUrl).then((response) => {
-    //   if(response.code === 200){
-    //     this.data.info = response
-    //     this.$store.commit('perinfo',{data:response})
-    //   }
-    // }) 
-    var vm = this
-    vm.$http({
-      url: this.data.peInfoUrl,
-      method: 'jsonp',
-      params: {},
-      jsonp: 'callback',
-      emulateJSON: true,
-      headers: {
-        'Content-Type': 'x-www-from-urlencoded'
-      }
-    }).then(function (res) {
-      if(res.body.code === 200){
-        this.data.info = res.body
-        this.$store.commit('perinfo',{data:res.body})
-      }
-    })
+     this.$fetch(this.data.peInfoUrl,{sessionId: sessionStorage.getItem('sessionId')}).then((response) => {
+         this.data.info = response
+         this.$store.commit('perinfo',{data:response})
+     })
+//    var vm = this
+//    vm.$http({
+//      url: this.data.peInfoUrl,
+//      method: 'jsonp',
+//      params: {},
+//      jsonp: 'callback',
+//      emulateJSON: true,
+//      headers: {
+//        'Content-Type': 'x-www-from-urlencoded'
+//      }
+//    }).then(function (res) {
+//      if(res.body.code === 200){
+//        this.data.info = res.body
+//        this.$store.commit('perinfo',{data:res.body})
+//      }
+//    })
   },
   created: function () {
     // $(window).resize(function(){

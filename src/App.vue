@@ -18,10 +18,10 @@ export default {
     }
   },
   watch:{
-    data:{  
-      handler:function(val,oldval){  
+    data:{
+      handler:function(val,oldval){
         this.$store.commit('realchat',{data:val})
-      },  
+      },
       deep:true
     },
   },
@@ -34,26 +34,27 @@ export default {
       return null;
     },
     wsInit: function(){
-      var ws = new WebSocket("wss://stoneapi.snail.com:4433");
-      var _this = this;
-      ws.onopen = function (evt) {
-        ws.onmessage = function (evt) { 
-          var received_msg = evt.data;
-          _this.data = evt.data
-          console.log(_this.data, 'received')
+      let sessionId = sessionStorage.getItem('sessionId')
+      if (sessionId !== undefined && sessionId !== null) {
+        var ws = new WebSocket("ws://127.0.0.1:9090/ws?token=" + sessionId);
+        let _this = this;
+        ws.onopen = function (evt) {
+          ws.onmessage = function (evt) {
+            var received_msg = evt.data;
+            _this.data = evt.data
+            console.log(_this.data, 'received')
+          };
+          var match = document.cookie.match(/(?:^| )token=([^;]+)/);
+          if (match) {
+              var token = decodeURIComponent(match[1]);
+              this.send('{"type":"auth", "token":"'+token+'"}');
+          }
         };
-        var match = document.cookie.match(/(?:^| )token=([^;]+)/);
-        if (match) {
-            var token = decodeURIComponent(match[1]);
-            this.send('{"type":"auth", "token":"'+token+'"}');
-        }
-      };
-      ws.onclose = function() {
-        console.log('ws closed, try reconnect in 2s');
-        setTimeout(function(){_this.wsInit()}, 2000);
       }
-
-
+        ws.onclose = function() {
+          console.log('ws closed, try reconnect in 2s');
+          setTimeout(function(){_this.wsInit()}, 2000);
+        }
       window.clearInterval(this.set);
       function sendhert(){
         ws.send('{"type":"heart"}');

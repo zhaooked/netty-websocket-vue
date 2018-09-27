@@ -10,12 +10,12 @@ export default {
   name: 'navBar',
   data () {
     return {
-      
+
     }
   },
   methods: {
     closewindow:function(){
-      stone.closeWindow()
+//      stone.closeWindow()
     }
   },
   mounted(){

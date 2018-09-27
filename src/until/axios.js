@@ -56,6 +56,7 @@ export function fetch(url,params={}){
       params:params
     })
     .then(response => {
+      console.log(response.data)
       resolve(response.data);
     })
     .catch(err => {
@@ -73,6 +74,7 @@ export function fetch(url,params={}){
  */
 
  export function post(url,data = {}){
+   console.log(data)
    return new Promise((resolve,reject) => {
       axios.post(url,data,{
         withCredentials:true
@@ -85,6 +87,20 @@ export function fetch(url,params={}){
       })
    })
  }
+
+export function postFile(url, data = {}){
+  console.log(data)
+  let config = { headers:{'Content-Type': 'multipart/form-data'}}
+  return new Promise((resolve, reject) => {
+    axios.post(url, data, config)
+      .then(response => {
+        resolve(response.data);
+      })
+      .catch(err => {
+        reject(err)
+      })
+  })
+}
 
  /**
  * 封装patch请求
@@ -126,7 +142,7 @@ window.addEventListener('unhandledrejection', event =>
 {
 console.log(event.reason); // 打印"Hello, Fundebug!"
 });
- 
+
 window.addEventListener('rejectionhandled', event =>
 {
 console.log('rejection handled'); // 1秒后打印"rejection handled"

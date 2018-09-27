@@ -29,8 +29,14 @@ export default {
               state.chatinfolist = list
               if(browser.versions.StoneClient){
                 stone.showMsgMark(true)
-              }       
-           }else if(list.type === 'friend_online'){ // 好友上线
+              }
+           } else if (list.type === 'img_message') {
+             state.chatinfolist = list
+             if(browser.versions.StoneClient){
+               stone.showMsgMark(true)
+             }
+           }
+           else if(list.type === 'friend_online'){ // 好友上线
               state.friendonline = list
            }else if(list.type === 'friend_offline'){ // 好友下线
               state.friendoffline = list
@@ -39,7 +45,7 @@ export default {
               if(browser.versions.StoneClient){
                 stone.showMsgMark(true)
                 stone.ShowIMNotifyWindow(list.aid,list.nickname, list.avatar,1);
-              }                   
+              }
            }else if(list.type === 'friend_added'){ // 好友已添加在通知其上线
               state.friendadded = list
               if(browser.versions.StoneClient){
@@ -52,5 +58,5 @@ export default {
            }
         }
     },
-    
+
 }
