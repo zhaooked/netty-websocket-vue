@@ -47,18 +47,26 @@ export default {
       iscurrent:this.$store.state.menu.cause,
       AddContacts:this.$store.state.menu.other,
       data:{
-        info:[],
+        info: {},
         peInfoUrl: '../chat/info'
+      }
+    }
+  },
+  watch:{
+    "$store.state.realchat.personinfo":function(){
+      let per = this.$store.state.realchat.personinfo
+      if (per.aid === sessionStorage.getItem('sessionId')) {
+        this.data.info = per
       }
     }
   },
   methods: {
   },
   mounted(){
-     this.$fetch(this.data.peInfoUrl,{sessionId: sessionStorage.getItem('sessionId')}).then((response) => {
-         this.data.info = response
-         this.$store.commit('perinfo',{data:response})
-     })
+//     this.$fetch(this.data.peInfoUrl,{sessionId: sessionStorage.getItem('sessionId')}).then((response) => {
+//         this.data.info = response
+//         this.$store.commit('perinfo',{data:response})
+//     })
 //    var vm = this
 //    vm.$http({
 //      url: this.data.peInfoUrl,

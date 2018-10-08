@@ -35,26 +35,25 @@ export default {
     },
     wsInit: function(){
       let sessionId = sessionStorage.getItem('sessionId')
-      if (sessionId !== undefined && sessionId !== null) {
-        var ws = new WebSocket("ws://127.0.0.1:9090/ws?token=" + sessionId);
-        let _this = this;
-        ws.onopen = function (evt) {
-          ws.onmessage = function (evt) {
-            var received_msg = evt.data;
-            _this.data = evt.data
-            console.log(_this.data, 'received')
-          };
-          var match = document.cookie.match(/(?:^| )token=([^;]+)/);
-          if (match) {
-              var token = decodeURIComponent(match[1]);
-              this.send('{"type":"auth", "token":"'+token+'"}');
-          }
+      let wsUrl = (sessionId !== null && sessionId !== undefined) ? ('ws://207.246.67.92:9090/ws?token=' + sessionId) : 'ws://207.246.67.92:9090'
+      var ws = new WebSocket(wsUrl)
+      let _this = this;
+      ws.onopen = function (evt) {
+        ws.onmessage = function (evt) {
+          var received_msg = evt.data;
+          _this.data = evt.data
+          console.log(_this.data, 'received')
         };
-      }
-        ws.onclose = function() {
-          console.log('ws closed, try reconnect in 2s');
-          setTimeout(function(){_this.wsInit()}, 2000);
+        var match = document.cookie.match(/(?:^| )token=([^;]+)/);
+        if (match) {
+            var token = decodeURIComponent(match[1]);
+            this.send('{"type":"auth", "token":"'+token+'"}');
         }
+      };
+      ws.onclose = function() {
+        console.log('ws closed, try reconnect in 2s');
+        setTimeout(function(){_this.wsInit()}, 2000);
+      }
       window.clearInterval(this.set);
       function sendhert(){
         ws.send('{"type":"heart"}');

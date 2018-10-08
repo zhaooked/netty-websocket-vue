@@ -1,7 +1,7 @@
 import axios from 'axios';
 // import { Message } from 'element-ui';
 
-axios.defaults.timeout = 5000;
+axios.defaults.timeout = 10000;
 axios.defaults.baseURL ='';
 
 
@@ -90,7 +90,7 @@ export function fetch(url,params={}){
 
 export function postFile(url, data = {}){
   console.log(data)
-  let config = { headers:{'Content-Type': 'multipart/form-data'}}
+  let config = { headers: {'Content-Type': 'multipart/form-data'}}
   return new Promise((resolve, reject) => {
     axios.post(url, data, config)
       .then(response => {

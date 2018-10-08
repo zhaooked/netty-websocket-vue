@@ -9,7 +9,7 @@
          <div class="userName">{{currentData[0].nickname}}</div>
          <div class="userAbout">{{currentData[0].nickname}}</div>
          <div class="inGame">
-            <h3>{{LatelyGame.length > 0 ? '最近正在玩' : 'TA最近毫无动静'}}</h3>
+            <h3>{{'TA最近毫无动静'}}</h3>
             <ul>
                <li v-for="list in LatelyGame" :gameid="list.game_id">
                   <img :src="list.logo"/>
@@ -112,15 +112,6 @@ export default {
   created: function () {
     this.$hybrid.refuse = this.refuse
     this.$hybrid.button = this.button
-
-    // $(window).resize(function(){
-    //   $('.ContactsView').width($(window).width()-332).height($(window).height()-2)
-    //   $('.ContactsViewWarp,.ContactsViewCont').height($(window).height()-237)
-    // })
-    // $(function(){
-    //   $('.ContactsView').width($(window).width()-332).height($(window).height()-2)
-    //   $('.ContactsViewWarp,.ContactsViewCont').height($(window).height()-237)
-    // })
   }
 }
 </script>

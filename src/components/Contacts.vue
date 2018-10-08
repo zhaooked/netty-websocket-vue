@@ -251,6 +251,10 @@ export default {
         this.data[0].friendsList = $.extend(true, [], storeData2)
       }
     },
+    "$store.state.realchat.friendlist":function(){ // 监听好友被删除后 同步删除
+      let fl = this.$store.state.realchat.friendlist
+      this.data[0].friendsList = fl
+     }
   },
   methods:{
     isOnlineNum:function(){
@@ -355,24 +359,25 @@ export default {
     }
   },
   mounted () {
-    console.log('获取好友列表')
-    var vm = this
-    let re = post(this.data[0].friendsUrl, {})
-    console.log(this.data[0].friendsList)
-    re.then(res => {
-        var f = res.friend_list.map(function (t) {
-          vm.data[0].onlineNum += 1;
-          return {
-            is_online: 1,
-            aid: t.phone,
-            id: t.id,
-            nickname: t.phone,
-            avatar: t.headImg.replace(/resources/, 'static')
-          }
-        })
-        this.data[0].friendsList = f
-    })
-    console.log(this.data[0].friendsList)
+//    console.log('获取好友列表')
+//    var vm = this
+//    let re = post(this.data[0].friendsUrl, {})
+//    console.log(this.data[0].friendsList)
+//    re.then(res => {
+//        var f = res.friend_list.map(function (t) {
+//          vm.data[0].onlineNum += 1;
+//          return {
+//            is_online: 1,
+//            aid: t.phone,
+//            id: t.id,
+//            nickname: t.phone,
+//            session_id: t.phone,
+//            avatar: t.headImg.replace(/resources/, 'static')
+//          }
+//        })
+//        this.data[0].friendsList = f
+//    })
+//    console.log(this.data[0].friendsList)
    // this.$fetch(this.data[0].friendsUrl).then((response) => {
    //    if(response.code == 200){
    //      for(var i in response.friend_list){

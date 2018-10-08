@@ -6,7 +6,9 @@ export default {
         friendapply:{},
         friendadded:{},
         frienddeleted:{},
-        chatview:{}
+        chatview:{},
+        personinfo:{},
+        friendlist:[]
     },
     mutations:{
         realchat(state,data){
@@ -55,6 +57,10 @@ export default {
               state.frienddeleted = list
            }else if(list.type === 'chatview'){
               state.chatview = list.list
+           }else if(list.type === 'self_info'){
+              state.personinfo = list
+           }else if(list.type === 'friend_list'){
+              state.friendlist = list.list
            }
         }
     },

@@ -17,7 +17,7 @@
                        </div>
                        <div class="chatText" v-if="list.meType == 1">{{list.text}}</div>
                        <div class="chatText" v-if="list.meType == 2">
-                          <img :src="list.url" style="width: 300px"/>
+                          <img :src="list.url" style="max-width: 300px;min-width: 50px"/>
                        </div>
                        <div class="chatState"></div>
                     </div>
@@ -29,7 +29,9 @@
           <div class="edMenu">
              <div class="edMenuIcon face" v-if="false"></div>
              <div class="edMenuIcon image">
-               <input type="file" accept="image/png,image/gif,image/jpeg" @change="triggerFile($event)"/>
+               <form id="picForm">
+                 <input type="file" accept="image/png,image/gif,image/jpeg" @change="triggerFile($event)"/>
+               </form>
              </div>
           </div>
           <div class="edCont">
@@ -157,23 +159,30 @@ export default {
     },
     triggerFile: function (event) {
       let file = event.target.files[0]
+      if (file === undefined) {
+        return
+      }
       let fromId = sessionStorage.getItem('sessionId')
       let param = new FormData()
       param.append('file', file)
       param.append('fromSessionId', fromId)
       param.append('toSessionId', this.chatData.aid)
-      console.log(param.get('file'))
       let on = {
         is_type: "isSelf",
-        time: "",
+        time: '',
         meType: 2,
+        url: '/static/img/loader.gif',
         avatar:this.$store.state.peinfo.list.avatar
       }
+      let _this = this
+      this.messageList.push(on)
+      let index = this.messageList.length - 1
       this.$postFile('../chat/sendImg',param).then(res => {
+        _this.$el.querySelector('#picForm').reset()
         on.url = res.url
-        this.messageList.push(on)
-        this.nowtime = this.time(parseInt(res.timestamp),'hm')
-        this.saveRecord(on, '图片')
+        _this.nowtime = _this.time(parseInt(res.timestamp),'hm')
+        _this.messageList[index].url = res.url
+        _this.saveRecord(on, '图片')
       })
     },
     enter:function(obj){
@@ -215,10 +224,11 @@ export default {
         avatar:this.$store.state.peinfo.list.avatar
       }
       let fromId = sessionStorage.getItem('sessionId')
+      let _this = this;
       this.$fetch(this.data.sendmessageUrl, {fromSessionId: fromId, toSessionId: aid, message: content}).then((response) => {
-          this.messageList.push(on)
-          this.nowtime = this.time(parseInt(response.timestamp),'hm')
-          this.saveRecord(on,content)
+        _this.messageList.push(on)
+        _this.nowtime = _this.time(parseInt(response.timestamp),'hm')
+        _this.saveRecord(on,content)
       })
     }
   },
